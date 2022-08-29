@@ -20,6 +20,8 @@ public class Employee {
     private String name;
     private String country;
     private String email;
+    private String adress;
+    private int phone;
 
     public Integer getId() {
         return id;
@@ -53,4 +55,19 @@ public class Employee {
         this.email = email;
     }
 
+    public String getAdress() {
+        return adress;
+    }
+
+    public void setAdress(String adress) {
+        this.adress = adress;
+    }
+
+    public int getPhone() {
+        return phone;
+    }
+
+    public void setPhone(int phone) {
+        this.phone = phone;
+    }
 }
