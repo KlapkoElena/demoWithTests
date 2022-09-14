@@ -39,6 +39,11 @@ public class ServiceBean implements Service {
     }
 
     @Override
+    public Employee getByCountry(String country) {
+        return null;
+    }
+
+    @Override
     public Employee updateById(Integer id, Employee employee) {
         return repository.findById(id)
                 .map(entity -> {
@@ -67,5 +72,65 @@ public class ServiceBean implements Service {
     public void removeAll() {
         repository.deleteAll();
 
+    }
+
+    @Override
+    public List<Employee> getCountry(String country) {
+        return repository.getEmployeeByCountry(country);
+    }
+
+    @Override
+    public Employee updateByCountry(String country) {
+        return null;
+    }
+
+    @Override
+    public Employee updateByCountry(String country, Employee employee) {
+        return repository.findById(Integer.valueOf(country)).map(entity -> {
+            entity.setName(employee.getName());
+            entity.setEmail(employee.getEmail());
+            entity.setCountry(employee.getCountry());
+            entity.setAdress(employee.getAdress());
+            entity.setPhone(employee.getPhone());
+            return repository.save(entity);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found from country = " + country));
+    }
+
+    @Override
+    public Employee updateByName(String name) {
+        return null;
+    }
+    @Override
+    public List<Employee> getName(String name) {
+        return repository.getEmployeeByName(name);
+    }
+
+    @Override
+    public Employee updateByName(String name, Employee employee) {
+        return repository.findById(Integer.valueOf(name)).map(entity -> {
+                    entity.setName(employee.getName());
+                    entity.setEmail(employee.getEmail());
+                    entity.setCountry(employee.getCountry());
+                    entity.setAdress(employee.getAdress());
+                    entity.setPhone(employee.getPhone());
+                    return repository.save(entity);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with name = " + name));
+    }
+
+    @Override
+    public List<Employee> getByName(String name) {
+        return null;
+    }
+
+    @Override
+    public List<Employee> getAllName(String name) {
+        return repository.getAllByName(name);
+    }
+
+    @Override
+    public List<Employee> getNameByPhone(Integer phone) {
+        return repository.getEmployeeByPhone(phone);
     }
 }
