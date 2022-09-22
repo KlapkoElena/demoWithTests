@@ -3,6 +3,7 @@ package com.example.demowithtests;
 import com.example.demowithtests.domain.Employee;
 import com.example.demowithtests.repository.Repository;
 import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -89,4 +90,41 @@ public class RepositoryTests {
         Assertions.assertThat(employee1).isNull();
     }
 
+    @Test
+    @Order(6)
+    public void getEmployeeByNameTest() {
+
+        Employee employee = Employee.builder().name("Mila").build();
+        repository.save(employee);
+        List<Employee> employeesList = repository.findAll();
+        Assertions.assertThat(employeesList.get(0).getName()).isEqualTo("Mila");
+    }
+
+    @Test
+    @Order(7)
+    public void getEmployeeByCountryTest() {
+        Employee employee = new Employee();
+        employee.setCountry("Ukraine");
+        repository.save(employee);
+        List<Employee> employeesList = repository.findAll();
+        Assertions.assertThat(employeesList.get(0).getCountry()).isEqualTo("Ukraine");
+    }
+
+    @Test
+    @Order(8)
+    public void getAllByNameTest() {
+        Employee employee = Employee.builder().name("Lena").build();
+        repository.save(employee);
+        List<Employee> employeesList = repository.findAll();
+        Assertions.assertThat(employeesList.get(0).getName()).isEqualTo("Lena");
+    }
+
+    @Test
+    @Order(9)
+    public void getEmployeeByPhoneTest() {
+        Employee employee = Employee.builder().phone(326554).build();
+        repository.save(employee);
+        List<Employee> employeesList = repository.findAll();
+        Assert.assertEquals(employeesList.get(0).getPhone(), 326554, 0);
+    }
 }

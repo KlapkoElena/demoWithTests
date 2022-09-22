@@ -61,7 +61,7 @@ public class Controller {
         return service.updateById(Integer.valueOf(country), employee);
     }
 
-    // Получение имен всех юрезов
+    // Получение имен всех юзеров
     @GetMapping(value = "/users", params = {"allname"})
     @ResponseStatus(HttpStatus.OK)
     public List<Employee> getAllName(@RequestParam (value = "name") String name){
