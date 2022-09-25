@@ -1,26 +1,52 @@
 package com.example.demowithtests.web;
 
 import com.example.demowithtests.domain.Employee;
+import com.example.demowithtests.dto.*;
 import com.example.demowithtests.service.Service;
+import com.example.demowithtests.util.config.EmployeeConverter;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
+@Slf4j
+@Tag(name = "Employee", description = "Employee API")
 public class Controller {
 
     private final Service service;
+    private final EmployeeConverter converter;
 
     //Операция сохранения юзера в базу данных
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public Employee saveEmployee(@RequestBody Employee employee) {
-        return service.create(employee);
+    public EmployeeSave1Dto saveEmployee(@RequestBody @Valid EmployeeSave1Dto requestForSave) {
+
+        Employee employee = converter.getMapperFacade().map(requestForSave, Employee.class);
+        EmployeeSave1Dto dto = converter.toSaveDto(service.create(employee));
+
+        return dto;
+    }
+
+    //save 2 dto
+    @PostMapping("/users/save")
+    @ResponseStatus(HttpStatus.CREATED)
+    public EmployeeSave2Dto saveEmployee2(@RequestBody @Valid EmployeeSave2Dto requestForSave) {
+
+        var employee = converter.getMapperFacade().map(requestForSave, Employee.class);
+        var dto = converter.toSave2Dto(service.create(employee));
+
+        return dto;
     }
 
     //Получение списка юзеров
@@ -33,10 +59,24 @@ public class Controller {
     //Получения юзера по id
     @GetMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Employee getEmployeeById(@PathVariable Integer id) {
+    public EmployeeRead1Dto getEmployeeById(@PathVariable Integer id) {
+        log.debug("getEmployeeById() Controller - start: id = {}", id);
+        var employee = service.getById(id);
+        log.debug("getById() Controller - to dto start: id = {}", id);
+        var dto = converter.toReadDto(employee);
+        log.debug("getEmployeeById() Controller - end: name = {}", dto.name);
+        return dto;
+    }
 
-        Employee employee = service.getById(id);
-        return employee;
+    @GetMapping("/users/dto/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public EmployeeRead2Dto getEmployeeById2 (@PathVariable Integer id) {
+        log.debug("getEmployeeById() Controller - start: id = {}", id);
+        var employee = service.getById(id);
+        log.debug("getById() Controller - to dto start: id = {}", id);
+        var dto = converter.toRead2Dto(employee);
+        log.debug("getEmployeeById() Controller - end: name = {}", dto.name);
+        return dto;
     }
 
     //Получения юзеров по имени
@@ -76,11 +116,18 @@ public class Controller {
     }
 
     //Обновление юзера
-    @PutMapping("/users/{id}")
+    @PatchMapping ("/users/update/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Employee refreshEmployee(@PathVariable("id") Integer id, @RequestBody Employee employee) {
+    public EmployeeUpdate1Dto refreshEmployee(@PathVariable("id") Integer id, @RequestBody Employee employee) {
+        EmployeeUpdate1Dto dto = converter.toUpdateDto(service.updateById(id, employee));
+        return dto;
+    }
 
-        return service.updateById(id, employee);
+    @PatchMapping ("/users/update2/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public EmployeeUpdate2Dto refreshEmployee2(@PathVariable("id") Integer id, @RequestBody Employee employee) {
+        EmployeeUpdate2Dto dto = converter.toUpdate2Dto(service.updateById(id, employee));
+        return dto;
     }
 
     //Удаление по id
